@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="design-system.css">
+    <link rel="icon" href="logo_tc_light_h24.svg" type="image/svg+xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 24px;
+            color: var(--color-text-level1);
+            background: var(--color-background);
+            font-family: var(--font-family-base);
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: var(--color-background-level1);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-line);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-height: 80px;
+            padding: 16px 24px;
+            background: var(--color-background-level1);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .brand-logo {
+            display: block;
+            width: auto;
+            height: 24px;
+            flex: 0 0 auto;
+        }
+
+        .brand-compact {
+            display: none;
+        }
+
+        .brand-separator {
+            width: 2px;
+            height: 24px;
+            flex: 0 0 auto;
+            background: var(--color-border);
+        }
+
+        header h1 {
+            font-size: 32px;
+            line-height: 48px;
+            font-weight: 700;
+        }
+
+        header p {
+            margin-left: auto;
+            color: var(--color-text-level2);
+            font-size: 14px;
+            line-height: 22px;
+        }
+
+        .main-content {
+            padding: 24px;
+        }
+
+        .session-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .session-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .session-actions .btn {
+            padding: 8px 12px;
+            text-decoration: none;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border: 0;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 22px;
+            font-weight: 600;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary {
+            color: var(--color-text-white);
+            background: var(--color-primary-main);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-primary:active {
+            background: var(--color-primary-click);
+        }
+
+        .btn-secondary {
+            color: var(--color-text-level1);
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-background-disabled);
+        }
+
+        .btn:focus-visible,
+        .modal-close:focus-visible {
+            outline: 3px solid var(--color-primary-main);
+            outline-offset: 3px;
+        }
+
+        .btn-danger {
+            color: var(--color-text-white);
+            background: var(--color-error-main);
+        }
+
+        .btn-danger:hover {
+            background: var(--color-error-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-danger:active {
+            background: var(--color-error-click);
+        }
+
+        .btn-warning {
+            color: var(--color-text-level1);
+            background: var(--color-warning-main);
+        }
+
+        .btn-warning:hover {
+            background: var(--color-warning-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-warning:active {
+            background: var(--color-warning-click);
+        }
+
+        .btn-success {
+            color: var(--color-text-level1);
+            background: var(--color-success-main);
+        }
+
+        .btn-success:hover {
+            background: var(--color-success-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-success:active {
+            background: var(--color-success-click);
+        }
+
+        .btn:disabled {
+            color: var(--color-text-disabled);
+            background: var(--color-background-disabled);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        th {
+            color: var(--color-text-level1);
+            background: var(--color-background);
+            font-weight: 600;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        tbody tr:hover {
+            background: var(--color-primary-hover-bg);
+        }
+
+        .empty-state {
+            padding: 40px 24px;
+            color: var(--color-text-level2);
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--radius-xs);
+            font-size: 12px;
+            line-height: 18px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .status-active {
+            color: var(--color-success-click);
+            background: var(--color-success-select-bg);
+        }
+
+        .status-disabled {
+            color: var(--color-error-click);
+            background: var(--color-error-select-bg);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        #alert-container {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: min(420px, calc(100vw - 32px));
+            pointer-events: none;
+        }
+
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-level3);
+            pointer-events: auto;
+        }
+
+        .alert-message {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .alert-close {
+            flex: 0 0 auto;
+            padding: 0 4px;
+            border: 0;
+            color: inherit;
+            background: transparent;
+            font: inherit;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .alert-success {
+            color: var(--color-success-click);
+            background: var(--color-success-hover-bg);
+            border: 1px solid var(--color-success-select-bg);
+        }
+
+        .alert-error {
+            color: var(--color-error-click);
+            background: var(--color-error-hover-bg);
+            border: 1px solid var(--color-error-select-bg);
+        }
+
+        .modal {
+            width: min(500px, calc(100% - 32px));
+            max-height: calc(100% - 32px);
+            margin: auto;
+            padding: 0;
+            border: 0;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-level1);
+            background: var(--color-background-level1);
+            box-shadow: var(--shadow-level3);
+        }
+
+        .modal::backdrop {
+            background: var(--color-backdrop);
+            backdrop-filter: blur(4px);
+        }
+
+        body:has(.modal[open]) {
+            overflow: hidden;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            background: var(--color-background-level1);
+            box-shadow: var(--shadow-level3);
+        }
+
+        .modal-content h2 {
+            color: var(--color-text-level1);
+            font-size: 24px;
+            line-height: 36px;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .modal-close {
+            flex: 0 0 auto;
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: var(--radius-sm);
+            color: var(--color-text-level2);
+            background: var(--color-background);
+            font: inherit;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-close:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .modal-description {
+            color: var(--color-text-level2);
+            overflow-wrap: anywhere;
+        }
+
+        .modal-error {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border: 1px solid var(--color-error-select-bg);
+            border-radius: var(--radius-md);
+            color: var(--color-error-click);
+            background: var(--color-error-hover-bg);
+            overflow-wrap: anywhere;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-text-level1);
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary-main);
+            box-shadow: 0 0 0 3px var(--color-primary-hover-bg);
+        }
+
+        .form-hint {
+            margin-top: 8px;
+            color: var(--color-text-level2);
+            font-size: 12px;
+            line-height: 18px;
+            letter-spacing: 0.04em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .brand-full {
+                display: none;
+            }
+
+            .brand-compact {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            header {
+                gap: 12px;
+                padding: 16px;
+            }
+
+            header h1 {
+                font-size: 30px;
+                line-height: 46px;
+            }
+
+            header p {
+                display: none;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .session-bar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .modal-buttons {
+                flex-direction: column-reverse;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .container {
+                border-radius: var(--radius-xl);
+            }
+
+            .modal-content {
+                border-radius: var(--radius-xl);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img class="brand-logo brand-full" src="logo_tc_light_h24.svg" alt="鴻海科技集團">
+            <img class="brand-logo brand-compact" src="logo_tc_light_h24.svg" alt="鴻海">
+            <span class="brand-separator" aria-hidden="true"></span>
+            <h1>用户管理</h1>
+            <p>管理用户及其 API Key 访问权限</p>
+        </header>
+
+        <main class="main-content">
+            <div id="alert-container" aria-live="polite" aria-atomic="false"></div>
+            <div class="session-bar">
+                <span>已登录：<strong id="current-user"></strong></span>
+                <div class="session-actions">
+                    <a class="btn btn-primary" href="/">API Key 管理</a>
+                    <a class="btn btn-primary" href="/change-password.html">修改密码</a>
+                    <button class="btn btn-primary" type="button" onclick="logout(this)">退出登录</button>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <button class="btn btn-primary" type="button" onclick="openUserForm(undefined, this)">＋ 新增用户</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>角色</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr><td class="empty-state" colspan="5">正在加载...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <dialog class="modal" id="user-modal" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">新增用户</h2>
+                <button class="modal-close" type="button" aria-label="关闭" onclick="closeUserForm()">×</button>
+            </div>
+            <form id="user-form">
+                <input id="user-id" type="hidden">
+                <div class="form-group">
+                    <label for="user-name">用户名</label>
+                    <input id="user-name" minlength="3" maxlength="32" pattern="[A-Za-z0-9._\-]+" autocomplete="off" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">初始密码 / 重设密码</label>
+                    <input id="user-password" type="password" minlength="8" maxlength="256" autocomplete="new-password">
+                    <p class="form-hint" id="password-hint">新用户首次登录时必须修改初始密码。</p>
+                </div>
+                <p class="modal-error" id="user-error" role="alert" hidden></p>
+                <div class="modal-buttons">
+                    <button class="btn btn-secondary" type="button" onclick="closeUserForm()">取消</button>
+                    <button class="btn btn-primary" type="submit">保存</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <dialog class="modal" id="confirm-modal" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="confirm-title">确认操作</h2>
+                <button class="modal-close" type="button" aria-label="关闭" onclick="closeConfirmModal()">×</button>
+            </div>
+            <p class="modal-description" id="confirm-message"></p>
+            <p class="modal-error" id="confirm-error" role="alert" hidden></p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" type="button" onclick="closeConfirmModal()" autofocus>取消</button>
+                <button class="btn btn-primary" id="confirm-submit" type="button">确认</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        const usersBody = document.getElementById('users-tbody');
+        const userModal = document.getElementById('user-modal');
+        const userForm = document.getElementById('user-form');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmSubmit = document.getElementById('confirm-submit');
+        const modalTriggers = new WeakMap();
+        let confirmAction = null;
+
+        function openModal(modal, trigger) {
+            modalTriggers.set(modal, trigger);
+            modal.showModal();
+        }
+
+        function setModalBusy(modal, busy) {
+            modal.setAttribute('aria-busy', String(busy));
+            modal.querySelectorAll('button, input').forEach(element => {
+                element.disabled = busy;
+            });
+        }
+
+        function showModalError(id, text = '') {
+            const error = document.getElementById(id);
+            error.textContent = text;
+            error.hidden = !text;
+        }
+
+        function closeModal(modal) {
+            if (modal.getAttribute('aria-busy') !== 'true') modal.close();
+        }
+
+        [userModal, confirmModal].forEach(modal => {
+            modal.addEventListener('close', () => {
+                const trigger = modalTriggers.get(modal);
+                if (trigger && trigger.isConnected) trigger.focus();
+            });
+            modal.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    closeModal(modal);
+                }
+            });
+            modal.addEventListener('cancel', event => {
+                if (modal.getAttribute('aria-busy') === 'true') event.preventDefault();
+            });
+            modal.addEventListener('click', event => {
+                const bounds = modal.getBoundingClientRect();
+                if (event.target === modal && (
+                    event.clientX < bounds.left || event.clientX > bounds.right ||
+                    event.clientY < bounds.top || event.clientY > bounds.bottom
+                )) closeModal(modal);
+            });
+        });
+
+        function openConfirmModal(title, message, actionLabel, action, isDanger, trigger) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            confirmSubmit.textContent = actionLabel;
+            confirmSubmit.className = `btn btn-primary`;
+            showModalError('confirm-error');
+            confirmAction = action;
+            openModal(confirmModal, trigger);
+        }
+
+        function closeConfirmModal() {
+            closeModal(confirmModal);
+        }
+
+        confirmModal.addEventListener('close', () => {
+            confirmAction = null;
+        });
+
+        confirmSubmit.addEventListener('click', async () => {
+            if (!confirmAction || confirmModal.getAttribute('aria-busy') === 'true') return;
+            setModalBusy(confirmModal, true);
+            showModalError('confirm-error');
+            const label = confirmSubmit.textContent;
+            confirmSubmit.textContent = '处理中...';
+            try {
+                const message = await confirmAction();
+                confirmModal.close();
+                if (message) {
+                    showMessage(message);
+                    await loadUsers();
+                }
+            } catch (error) {
+                showModalError('confirm-error', error.message);
+            } finally {
+                setModalBusy(confirmModal, false);
+                confirmSubmit.textContent = label;
+            }
+        });
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character]);
+        }
+
+        async function apiRequest(url, options) {
+            const response = await fetch(url, options);
+            if (response.status === 401) {
+                window.location.href = '/login.html';
+                throw new Error('登录已过期。');
+            }
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || `请求失败 (${response.status})`);
+            return data;
+        }
+
+        function showMessage(text, isError = false) {
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${isError ? 'error' : 'success'}`;
+            alert.setAttribute('role', isError ? 'alert' : 'status');
+
+            const alertMessage = document.createElement('span');
+            alertMessage.className = 'alert-message';
+            alertMessage.textContent = text;
+
+            const closeButton = document.createElement('button');
+            closeButton.className = 'alert-close';
+            closeButton.type = 'button';
+            closeButton.setAttribute('aria-label', '关闭提示');
+            closeButton.title = '关闭提示';
+            closeButton.textContent = '×';
+            closeButton.addEventListener('click', dismiss);
+
+            alert.append(alertMessage, closeButton);
+            container.appendChild(alert);
+
+            const timeoutId = setTimeout(dismiss, 3000);
+
+            function dismiss() {
+                clearTimeout(timeoutId);
+                alert.remove();
+            }
+        }
+
+        async function loadCurrentUser() {
+            try {
+                const { user } = await apiRequest('/api/auth/me');
+                document.getElementById('current-user').textContent = user.username;
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await apiRequest('/api/users');
+                usersBody.innerHTML = users.map(user => {
+                    const isSuperAdmin = user.isSuperAdmin;
+                    const status = user.disabled
+                        ? '<span class="badge status-disabled">已禁用</span>'
+                        : '<span class="badge status-active">启用中</span>';
+                    const passwordStatus = user.mustChangePassword ? '（首次登录需改密）' : '';
+                    return `
+                        <tr>
+                            <td>${escapeHtml(user.username)} ${passwordStatus}</td>
+                            <td>${isSuperAdmin ? '超级管理员' : '普通用户'}</td>
+                            <td>${status}</td>
+                            <td>${new Date(user.createdAt).toLocaleString()}</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-primary" type="button" onclick="editUser('${user.id}', this)">修改</button>
+                                    <button class="btn btn-primary" type="button"
+                                        ${isSuperAdmin ? 'disabled' : ''}
+                                        onclick="toggleUser('${user.id}', ${user.disabled}, this)">
+                                        ${user.disabled ? '启用' : '禁用'}
+                                    </button>
+                                    <button class="btn btn-primary" type="button" ${isSuperAdmin ? 'disabled' : ''}
+                                        onclick="deleteUser('${user.id}', '${escapeHtml(user.username)}', this)">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('') || '<tr><td class="empty-state" colspan="5">暂无用户</td></tr>';
+            } catch (error) {
+                showMessage(error.message, true);
+                if (error.message.includes('Super administrator')) {
+                    window.location.href = '/';
+                }
+            }
+        }
+
+        function openUserForm(user, trigger) {
+            userForm.reset();
+            showModalError('user-error');
+            document.getElementById('user-id').value = user ? user.id : '';
+            document.getElementById('user-name').value = user ? user.username : '';
+            document.getElementById('user-password').required = !user;
+            document.getElementById('modal-title').textContent = user ? '修改用户' : '新增用户';
+            document.getElementById('password-hint').textContent = user
+                ? '留空表示不重设密码；重设后用户下次登录必须修改。'
+                : '新用户首次登录时必须修改初始密码。';
+            openModal(userModal, trigger);
+        }
+
+        function closeUserForm() {
+            closeModal(userModal);
+        }
+
+        function editUser(id, trigger) {
+            apiRequest('/api/users').then(users => {
+                const user = users.find(item => item.id === id);
+                if (user) openUserForm(user, trigger);
+            }).catch(error => showMessage(error.message, true));
+        }
+
+        userForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (userModal.getAttribute('aria-busy') === 'true') return;
+            const id = document.getElementById('user-id').value;
+            const data = { username: document.getElementById('user-name').value };
+            const password = document.getElementById('user-password').value;
+            if (password) data.password = password;
+
+            setModalBusy(userModal, true);
+            showModalError('user-error');
+            const button = userForm.querySelector('[type="submit"]');
+            button.textContent = '保存中...';
+            try {
+                await apiRequest(id ? `/api/users/${id}` : '/api/users', {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                userModal.close();
+                showMessage(id ? '用户信息已更新。' : '用户已创建。');
+                await loadUsers();
+            } catch (error) {
+                showModalError('user-error', error.message);
+            } finally {
+                setModalBusy(userModal, false);
+                button.textContent = '保存';
+            }
+        });
+
+        function toggleUser(id, isDisabled, trigger) {
+            const action = isDisabled ? 'enable' : 'disable';
+            const label = isDisabled ? '启用' : '禁用';
+            openConfirmModal(`${label}用户`, isDisabled
+                ? '启用后，此用户可以重新登录并使用其 API Key。'
+                : '禁用后，此用户的登录会话将立即失效，其 API Key 将无法使用。',
+            `确认${label}`, async () => {
+                await apiRequest(`/api/users/${id}/${action}`, { method: 'PUT' });
+                return `用户已${label}。`;
+            }, false, trigger);
+        }
+
+        function deleteUser(id, username, trigger) {
+            openConfirmModal('删除用户', `确认删除用户 ${username} 及其所有 API Key？此操作无法撤销。`,
+            '确认删除', async () => {
+                await apiRequest(`/api/users/${id}`, { method: 'DELETE' });
+                return '用户及其 API Key 已删除。';
+            }, true, trigger);
+        }
+
+        function logout(trigger) {
+            openConfirmModal('退出登录', '确认退出当前登录？', '退出登录', async () => {
+                await apiRequest('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/login.html';
+            }, false, trigger);
+        }
+
+        loadCurrentUser();
+        loadUsers();
+    </script>
+</body>
+</html>

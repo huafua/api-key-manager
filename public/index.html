@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key 管理</title>
+    <link rel="stylesheet" href="design-system.css">
+    <link rel="icon" href="logo_tc_light_h24.svg" type="image/svg+xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            font-size: 16px;
+            line-height: 24px;
+            color: var(--color-text-level1);
+            background: var(--color-background);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: var(--color-background-level1);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-line);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-height: 80px;
+            padding: 16px 24px;
+            background: var(--color-background-level1);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        header h1 {
+            font-size: 32px;
+            line-height: 48px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        header p {
+            margin-left: auto;
+            color: var(--color-text-level2);
+            font-size: 14px;
+            line-height: 22px;
+        }
+
+        .brand-logo {
+            display: block;
+            width: auto;
+            height: 24px;
+            flex: 0 0 auto;
+        }
+
+        .brand-compact {
+            display: none;
+        }
+
+        .brand-separator {
+            width: 2px;
+            height: 24px;
+            flex: 0 0 auto;
+            background: var(--color-border);
+        }
+
+        .main-content {
+            padding: 24px;
+        }
+
+        .session-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .session-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .session-actions .btn {
+            padding: 8px 12px;
+            text-decoration: none;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 22px;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--color-primary-main);
+            color: var(--color-text-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-primary:active {
+            background: var(--color-primary-click);
+        }
+
+        .btn-danger {
+            background: var(--color-error-main);
+            color: var(--color-text-white);
+        }
+
+        .btn-danger:hover {
+            background: var(--color-error-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-danger:active {
+            background: var(--color-error-click);
+        }
+
+        .btn-warning {
+            background: var(--color-warning-main);
+            color: var(--color-text-level1);
+        }
+
+        .btn-warning:hover {
+            background: var(--color-warning-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-warning:active {
+            background: var(--color-warning-click);
+        }
+
+        .btn-success {
+            background: var(--color-success-main);
+            color: var(--color-text-level1);
+        }
+
+        .btn-success:hover {
+            background: var(--color-success-hover);
+            box-shadow: var(--shadow-level1);
+        }
+
+        .btn-success:active {
+            background: var(--color-success-click);
+        }
+
+        .btn:disabled {
+            background: var(--color-background-disabled);
+            color: var(--color-text-disabled);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+            min-width: 860px;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--color-background);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text-level1);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        tbody tr:hover {
+            background: var(--color-primary-hover-bg);
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--color-primary-main);
+        }
+
+        .key-display {
+            font-family: 'Courier New', monospace;
+            background: var(--color-background);
+            padding: 4px 8px;
+            border-radius: var(--radius-xs);
+            word-break: break-all;
+            font-size: 12px;
+            line-height: 18px;
+            letter-spacing: 0.04em;
+        }
+
+        .key-copy-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .key-copy-row .key-display {
+            flex: 1;
+            min-width: 0;
+        }
+
+        td small {
+            color: var(--color-text-level2);
+            font-size: 12px;
+            line-height: 18px;
+            letter-spacing: 0.04em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--radius-xs);
+            font-size: 12px;
+            line-height: 18px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .status-active {
+            background: var(--color-success-select-bg);
+            color: var(--color-success-click);
+        }
+
+        .status-disabled {
+            background: var(--color-error-select-bg);
+            color: var(--color-error-click);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            box-shadow: none;
+            color: var(--color-text-level2);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .icon-button:hover,
+        .icon-button:active {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .icon-button.btn-primary {
+            color: var(--color-primary-main);
+        }
+
+        .icon-button.btn-warning {
+            color: var(--color-warning-click);
+        }
+
+        .icon-button.btn-success {
+            color: var(--color-success-click);
+        }
+
+        .icon-button.btn-danger {
+            color: var(--color-error-main);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            background: var(--color-backdrop);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-background-level1);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--shadow-level3);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 16px;
+            color: var(--color-text-level1);
+            font-size: 24px;
+            line-height: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text-level1);
+        }
+
+        .form-group input {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary-main);
+            box-shadow: 0 0 0 3px var(--color-primary-hover-bg);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        #alert-container {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: min(420px, calc(100vw - 32px));
+            pointer-events: none;
+        }
+
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-level3);
+            pointer-events: auto;
+        }
+
+        .alert-message {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .alert-close {
+            flex: 0 0 auto;
+            padding: 0 4px;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .alert-success {
+            background: var(--color-success-hover-bg);
+            color: var(--color-success-click);
+            border: 1px solid var(--color-success-select-bg);
+        }
+
+        .alert-error {
+            background: var(--color-error-hover-bg);
+            color: var(--color-error-click);
+            border: 1px solid var(--color-error-select-bg);
+        }
+
+        .alert-info {
+            background: var(--color-primary-hover-bg);
+            color: var(--color-primary-click);
+            border: 1px solid var(--color-primary-select-bg);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--color-text-level2);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--color-background-level1);
+            color: var(--color-text-level1);
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--color-primary-main);
+            font-size: 20px;
+            line-height: 30px;
+            margin-bottom: 4px;
+        }
+
+        .stat-card p {
+            color: var(--color-text-level2);
+            font-size: 14px;
+            line-height: 22px;
+        }
+
+        @media (max-width: 1200px) {
+            .brand-full {
+                display: none;
+            }
+
+            .brand-compact {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            header {
+                gap: 12px;
+                padding: 16px;
+            }
+
+            header h1 {
+                font-size: 30px;
+                line-height: 46px;
+            }
+
+            header p {
+                display: none;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            .session-bar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .container,
+            .stat-card {
+                border-radius: var(--radius-xl);
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                border-radius: var(--radius-xl);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img class="brand-logo brand-full" src="logo_tc_light_h24.svg" alt="鴻海科技集團">
+            <img class="brand-logo brand-compact" src="logo_tc_light_h24.svg" alt="鴻海">
+            <span class="brand-separator" aria-hidden="true"></span>
+            <h1>API Key 管理系統</h1>
+            <p>安全管理和控制所有的 API 密鑰</p>
+        </header>
+
+        <div class="main-content">
+            <div id="alert-container" aria-live="polite" aria-atomic="false"></div>
+
+            <div class="session-bar">
+                <span>已登录：<strong id="current-user"></strong></span>
+                <div class="session-actions">
+                    <a class="btn btn-primary" id="admin-users-link" href="/admin.html" hidden>用户管理</a>
+                    <a class="btn btn-primary" href="/change-password.html">修改密码</a>
+                    <button class="btn btn-primary" type="button" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="total-keys">0</h3>
+                    <p>總密鑰數</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="active-keys">0</h3>
+                    <p>活躍密鑰</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="disabled-keys">0</h3>
+                    <p>已禁用密鑰</p>
+                </div>
+            </div>
+
+            <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+                <div class="modal-content">
+                    <h2 id="confirmTitle">請確認操作</h2>
+                    <p id="confirmMessage"></p>
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="closeConfirmModal(false)">取消</button>
+                        <button type="button" class="btn btn-primary" onclick="closeConfirmModal(true)">確認</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="openCreateModal()">➕ 新增密鑰</button>
+                <button class="btn btn-primary" id="batch-disable-btn" onclick="batchDisable()" disabled>🔒 批量禁用</button>
+                <button class="btn btn-primary" id="batch-enable-btn" onclick="batchEnable()" disabled>🔓 批量啓用</button>
+                <button class="btn btn-primary" id="batch-delete-btn" onclick="batchDelete()" disabled>🗑️ 批量刪除</button>
+                <button class="btn btn-primary" onclick="location.reload()">🔄 刷新</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+                            <th>密鑰名稱</th>
+                            <th>密鑰值</th>
+                            <th>狀態</th>
+                            <th>創建時間</th>
+                            <th>最後使用</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keys-tbody">
+                        <tr>
+                            <td class="empty-state" colspan="7">加載中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 創建密鑰模態框 -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <h2>創建新的 API 密鑰</h2>
+            <form onsubmit="createApiKey(event)">
+                <div class="form-group">
+                    <label for="keyName">密鑰名稱（可選）</label>
+                    <input type="text" id="keyName" placeholder="例如：Production Key">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-danger" onclick="closeCreateModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">創建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let allKeys = [];
+        let selectedKeys = new Set();
+        let confirmResolver = null;
+
+        async function apiFetch(url, options) {
+            const response = await fetch(url, options);
+            if (response.status === 401) {
+                window.location.href = '/login.html';
+                throw new Error('登录已过期，请重新登录。');
+            }
+            if (response.status === 403) {
+                const data = await response.clone().json().catch(() => null);
+                if (data && data.code === 'PASSWORD_CHANGE_REQUIRED') {
+                    window.location.href = '/change-password.html';
+                    throw new Error('请先修改密码。');
+                }
+            }
+            if (!response.ok) {
+                const data = await response.clone().json().catch(() => null);
+                throw new Error(data && data.error ? data.error : `请求失败 (${response.status})`);
+            }
+            return response;
+        }
+
+        async function loadCurrentUser() {
+            try {
+                const response = await apiFetch('/api/auth/me');
+                const { user } = await response.json();
+                document.getElementById('current-user').textContent = user.username;
+                document.getElementById('admin-users-link').hidden = !user.isSuperAdmin;
+            } catch (error) {
+                if (window.location.pathname === '/login.html' || window.location.pathname === '/change-password.html') return;
+                showAlert('error', error.message);
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } finally {
+                window.location.href = '/login.html';
+            }
+        }
+
+        async function loadApiKeys() {
+            try {
+                const response = await apiFetch('/api/keys');
+                allKeys = await response.json();
+                renderTable();
+                updateStats();
+            } catch (error) {
+                showAlert('error', '加載密鑰失敗：' + error.message);
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('keys-tbody');
+            
+            if (allKeys.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">暫無 API 密鑰</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = allKeys.map(key => `
+                <tr>
+                    <td><input type="checkbox" class="checkbox" value="${key.id}" onchange="updateSelection()"></td>
+                    <td><strong>${key.name || '未命名'}</strong></td>
+                    <td>
+                        <div class="key-copy-row">
+                            <code class="key-display">${key.key}</code>
+                            <button class="btn btn-primary icon-button" type="button"
+                                aria-label="複製密鑰" title="複製密鑰"
+                                onclick="copyApiKey('${key.id}')">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                                    <path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${key.disabled ? 'status-disabled' : 'status-active'}">
+                            ${key.disabled ? '已禁用' : '活躍'}
+                        </span>
+                    </td>
+                    <td><small>${formatDate(key.createdAt)}</small></td>
+                    <td><small>${key.lastUsed ? formatDate(key.lastUsed) : '未使用'}</small></td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn ${key.disabled ? 'btn-success' : 'btn-warning'} icon-button" type="button"
+                                aria-label="${key.disabled ? '啓用密鑰' : '禁用密鑰'}"
+                                title="${key.disabled ? '啓用密鑰' : '禁用密鑰'}"
+                                onclick="toggleKeyStatus('${key.id}', ${key.disabled})">
+                                ${statusIcon(key.disabled)}
+                            </button>
+                            <button class="btn btn-danger icon-button" type="button"
+                                aria-label="刪除密鑰" title="刪除密鑰"
+                                onclick="deleteKey('${key.id}')">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function statusIcon(isDisabled) {
+            const shacklePath = isDisabled
+                ? 'M8 11V7a4 4 0 0 1 7.5-2.5'
+                : 'M8 11V7a4 4 0 0 1 8 0v4';
+
+            return `
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+                    <path d="${shacklePath}"></path>
+                    <path d="M12 15v2"></path>
+                </svg>
+            `;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleString('zh-CN');
+        }
+
+        function updateStats() {
+            const total = allKeys.length;
+            const active = allKeys.filter(k => !k.disabled).length;
+            const disabled = allKeys.filter(k => k.disabled).length;
+
+            document.getElementById('total-keys').textContent = total;
+            document.getElementById('active-keys').textContent = active;
+            document.getElementById('disabled-keys').textContent = disabled;
+        }
+
+        function updateSelection() {
+            selectedKeys.clear();
+            document.querySelectorAll('tbody .checkbox:checked').forEach(checkbox => {
+                selectedKeys.add(checkbox.value);
+            });
+
+            const hasSelection = selectedKeys.size > 0;
+            document.getElementById('batch-delete-btn').disabled = !hasSelection;
+            document.getElementById('batch-disable-btn').disabled = !hasSelection;
+            document.getElementById('batch-enable-btn').disabled = !hasSelection;
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all').checked;
+            document.querySelectorAll('tbody .checkbox').forEach(checkbox => {
+                checkbox.checked = selectAll;
+            });
+            updateSelection();
+        }
+
+        async function createApiKey(event) {
+            event.preventDefault();
+            const name = document.getElementById('keyName').value;
+
+            try {
+                const response = await apiFetch('/api/keys', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+
+                const newKey = await response.json();
+                allKeys.push(newKey);
+                renderTable();
+                updateStats();
+                closeCreateModal();
+                showAlert('success', `密鑰創建成功！密鑰值：${newKey.key}`);
+            } catch (error) {
+                showAlert('error', '創建密鑰失敗：' + error.message);
+            }
+        }
+
+        async function deleteKey(id) {
+            if (!await showConfirmModal('確認要刪除此密鑰嗎？')) return;
+
+            try {
+                await apiFetch(`/api/keys/${id}`, { method: 'DELETE' });
+                allKeys = allKeys.filter(k => k.id !== id);
+                renderTable();
+                updateStats();
+                showAlert('success', '密鑰已刪除');
+            } catch (error) {
+                showAlert('error', '刪除失敗：' + error.message);
+            }
+        }
+
+        async function batchDelete() {
+            if (selectedKeys.size === 0) return;
+            if (!await showConfirmModal(`確認要刪除 ${selectedKeys.size} 個密鑰嗎？`)) return;
+
+            try {
+                await apiFetch('/api/keys/batch/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: Array.from(selectedKeys) })
+                });
+
+                allKeys = allKeys.filter(k => !selectedKeys.has(k.id));
+                selectedKeys.clear();
+                renderTable();
+                updateStats();
+                showAlert('success', '批量刪除成功');
+            } catch (error) {
+                showAlert('error', '批量刪除失敗：' + error.message);
+            }
+        }
+
+        async function toggleKeyStatus(id, isDisabled) {
+            const endpoint = isDisabled ? 'enable' : 'disable';
+            try {
+                await apiFetch(`/api/keys/${id}/${endpoint}`, { method: 'PUT' });
+                const key = allKeys.find(k => k.id === id);
+                if (key) key.disabled = !isDisabled;
+                renderTable();
+                updateStats();
+                showAlert('success', isDisabled ? '密鑰已啓用' : '密鑰已禁用');
+            } catch (error) {
+                showAlert('error', '操作失敗：' + error.message);
+            }
+        }
+
+        async function batchDisable() {
+            if (selectedKeys.size === 0) return;
+            if (!await showConfirmModal(`確認要禁用 ${selectedKeys.size} 個密鑰嗎？`)) return;
+
+            try {
+                await apiFetch('/api/keys/batch/disable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: Array.from(selectedKeys) })
+                });
+
+                allKeys.forEach(k => {
+                    if (selectedKeys.has(k.id)) k.disabled = true;
+                });
+                selectedKeys.clear();
+                renderTable();
+                updateStats();
+                showAlert('success', '批量禁用成功');
+            } catch (error) {
+                showAlert('error', '批量禁用失敗：' + error.message);
+            }
+        }
+
+        async function batchEnable() {
+            if (selectedKeys.size === 0) return;
+            if (!await showConfirmModal(`確認要啓用 ${selectedKeys.size} 個密鑰嗎？`)) return;
+
+            try {
+                await apiFetch('/api/keys/batch/enable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: Array.from(selectedKeys) })
+                });
+
+                allKeys.forEach(k => {
+                    if (selectedKeys.has(k.id)) k.disabled = false;
+                });
+                selectedKeys.clear();
+                renderTable();
+                updateStats();
+                showAlert('success', '批量啓用成功');
+            } catch (error) {
+                showAlert('error', '批量啓用失敗：' + error.message);
+            }
+        }
+
+        function openCreateModal() {
+            document.getElementById('createModal').classList.add('active');
+            document.getElementById('keyName').focus();
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('active');
+            document.getElementById('keyName').value = '';
+        }
+
+        function showConfirmModal(message) {
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmModal').classList.add('active');
+            return new Promise(resolve => {
+                confirmResolver = resolve;
+            });
+        }
+
+        function closeConfirmModal(confirmed) {
+            document.getElementById('confirmModal').classList.remove('active');
+            if (confirmResolver) {
+                confirmResolver(confirmed);
+                confirmResolver = null;
+            }
+        }
+
+        async function copyApiKey(id) {
+            const apiKey = allKeys.find(key => key.id === id);
+            if (!apiKey) return;
+
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(apiKey.key);
+                } else {
+                    const input = document.createElement('textarea');
+                    input.value = apiKey.key;
+                    input.style.position = 'fixed';
+                    document.body.appendChild(input);
+                    let copied;
+                    try {
+                        input.select();
+                        copied = document.execCommand('copy');
+                    } finally {
+                        input.remove();
+                    }
+                    if (!copied) throw new Error('瀏覽器不支持剪貼簿操作');
+                }
+                showAlert('success', '密鑰已複製到剪貼簿');
+            } catch (error) {
+                showAlert('error', '複製密鑰失敗：' + error.message);
+            }
+        }
+
+        document.getElementById('confirmModal').addEventListener('click', event => {
+            if (event.target.id === 'confirmModal') closeConfirmModal(false);
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && confirmResolver) closeConfirmModal(false);
+        });
+
+        function showAlert(type, message) {
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.setAttribute('role', type === 'error' ? 'alert' : 'status');
+
+            const alertMessage = document.createElement('span');
+            alertMessage.className = 'alert-message';
+            alertMessage.textContent = message;
+
+            const closeButton = document.createElement('button');
+            closeButton.className = 'alert-close';
+            closeButton.type = 'button';
+            closeButton.setAttribute('aria-label', '關閉提示');
+            closeButton.title = '關閉提示';
+            closeButton.textContent = '×';
+            closeButton.addEventListener('click', dismiss);
+
+            alert.append(alertMessage, closeButton);
+            container.appendChild(alert);
+
+            const timeoutId = setTimeout(dismiss, 3000);
+
+            function dismiss() {
+                clearTimeout(timeoutId);
+                alert.remove();
+            }
+        }
+
+        // 初始加載
+        loadCurrentUser();
+        loadApiKeys();
+    </script>
+</body>
+</html>

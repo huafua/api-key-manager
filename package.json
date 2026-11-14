@@ -1,0 +1,21 @@
+{
+  "name": "api-key-manager",
+  "version": "1.0.0",
+  "description": "API Key Management System with Web UI",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node test-auth.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": [
+    "api-key",
+    "management",
+    "authentication"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

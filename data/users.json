@@ -1,0 +1,24 @@
+[
+  {
+    "id": "user_admin",
+    "username": "admin",
+    "passwordSalt": "425db14cdb656b626fd56253251791fd",
+    "passwordHash": "fdfa588f2b59f0ba8979c79355a2cf68864b85da291a8cc08ed09156b86ca7f24010f5c3bd2be41f30d342ddf978d56251cbdf16ffb7a0bc874971021b48acc2",
+    "role": "superadmin",
+    "disabled": false,
+    "mustChangePassword": false,
+    "createdAt": "2026-11-14T00:30:23.303Z",
+    "updatedAt": "2026-11-14T00:38:21.830Z"
+  },
+  {
+    "id": "user_8a7d2ee044ccc8a9",
+    "username": "user",
+    "passwordSalt": "c2c731723c22f3f9e8bc36f8c61cb630",
+    "passwordHash": "04799a38c05fa0b550d5570f2d6ea713bb68220d45c25037f2a405ed115136ca94ad9e2f965cf38e8b287e1e53da96f05837345773ed537d0e1654fad532e1b5",
+    "role": "user",
+    "disabled": false,
+    "mustChangePassword": false,
+    "createdAt": "2026-11-14T00:38:42.639Z",
+    "updatedAt": "2026-11-14T00:39:11.086Z"
+  }
+]

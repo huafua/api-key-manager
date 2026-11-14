@@ -1,0 +1,38 @@
+[
+  {
+    "id": "key_v2fki3u7b",
+    "key": "sk-2yhksq5o3yt0tpmh0d58dzi2lu9xeb8b",
+    "name": "first-app",
+    "disabled": false,
+    "ownerId": "user_admin",
+    "createdAt": "2026-11-13T08:23:49.877Z",
+    "lastUsed": "2026-11-13T09:03:47.880Z"
+  },
+  {
+    "id": "key_kmt9ps4xm",
+    "key": "sk-md6qq76jam6qclfxezo87om3eypmws4b",
+    "name": "demo-key",
+    "disabled": false,
+    "ownerId": "user_admin",
+    "createdAt": "2026-11-13T08:26:30.214Z",
+    "lastUsed": "2026-11-13T08:28:38.496Z"
+  },
+  {
+    "id": "key_104d72ded623",
+    "key": "sk-c74f7dc06656ea4ac8b81f9ceab29b2d",
+    "name": "demo-key",
+    "disabled": false,
+    "ownerId": "user_8a7d2ee044ccc8a9",
+    "createdAt": "2026-11-14T00:39:26.005Z",
+    "lastUsed": "2026-11-14T01:12:20.815Z"
+  },
+  {
+    "id": "key_3aad4f93c242",
+    "key": "sk-3751b4d1813110586d0fd6739520c685",
+    "name": "drop-this",
+    "disabled": false,
+    "ownerId": "user_8a7d2ee044ccc8a9",
+    "createdAt": "2026-11-14T01:12:27.678Z",
+    "lastUsed": "2026-11-14T02:06:04.003Z"
+  }
+]
